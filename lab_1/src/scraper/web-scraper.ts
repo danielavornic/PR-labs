@@ -48,6 +48,17 @@ export class WebScraper {
       }
     });
 
+    for (const product of products) {
+      const productPage = await this.getPageContent(product.link);
+
+      if (productPage) {
+        const $product = cheerio.load(productPage);
+        product.color = $product(".color a").first().attr("title") || "N/A";
+      } else {
+        console.error(`Failed to retrieve product page: ${product.link}`);
+      }
+    }
+
     return products;
   }
 
