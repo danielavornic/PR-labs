@@ -1,4 +1,4 @@
-import { Product } from "../models/product";
+import Product from "@/models/product";
 
 const MDL_TO_EUR_RATE = 0.0518; // 1 MDL = 0.0518 EUR (October 5, 2024)
 
@@ -40,7 +40,7 @@ export const processProducts = (
 
   return {
     products: filteredProducts,
-    totalPrice,
+    totalPrice: parseFloat(totalPrice.toFixed(2)),
     timestamp: new Date(),
   };
 };
