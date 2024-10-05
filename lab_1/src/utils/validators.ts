@@ -1,4 +1,4 @@
-import { Product } from "../models/product";
+import Product from "@/models/product";
 
 export const validateProduct = (product: Product): boolean => {
   // White space trimming

@@ -1,73 +1,26 @@
-import { Product } from "../models/product";
-import { validateProduct } from "../utils/validators";
-import axios from "axios";
-import * as cheerio from "cheerio";
+import { DEFAULT_HEADERS, DEFAULT_TIMEOUT, handleError } from "@/utils/scraper";
+import axios, { AxiosInstance } from "axios";
+import BaseScraper from "./base-scraper";
 
-export class WebScraper {
-  private readonly url: string;
-  private readonly headers: Record<string, string>;
+class WebScraper extends BaseScraper {
+  private readonly axiosInstance: AxiosInstance;
 
   constructor(url: string) {
-    this.url = url;
-    this.headers = {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    };
+    super(url);
+    this.axiosInstance = axios.create({
+      headers: DEFAULT_HEADERS,
+      timeout: DEFAULT_TIMEOUT,
+    });
   }
 
-  private async getPageContent(url: string): Promise<string | null> {
+  protected async getPageContent(url: string): Promise<string | null> {
     try {
-      const response = await axios.get(url, { headers: this.headers });
+      const response = await this.axiosInstance.get(url);
       return response.data;
     } catch (error) {
-      console.error(`Failed to retrieve page content. Error: ${error}`);
-      return null;
+      return handleError(error, `Failed to retrieve page content from ${url}`);
     }
-  }
-
-  private async extractProductInfo(html: string): Promise<Product[]> {
-    const $ = cheerio.load(html);
-    const products: Product[] = [];
-
-    $(".card-product").each((_, element) => {
-      const $element = $(element);
-      const titleElement = $element.find(".title a");
-
-      const name = titleElement.text().trim() || "N/A";
-      const link = titleElement.attr("href") || "N/A";
-      const priceText = $element
-        .find(".price-new b")
-        .text()
-        .trim()
-        .replace(" ", "");
-      const price = priceText ? parseFloat(priceText) : 0;
-
-      const product = new Product(name, price, link, "N/A");
-      if (validateProduct(product)) {
-        products.push(product);
-      }
-    });
-
-    for (const product of products) {
-      const productPage = await this.getPageContent(product.link);
-
-      if (productPage) {
-        const $product = cheerio.load(productPage);
-        product.color = $product(".color a").first().attr("title") || "N/A";
-      } else {
-        console.error(`Failed to retrieve product page: ${product.link}`);
-      }
-    }
-
-    return products;
-  }
-
-  public async scrape(): Promise<Product[]> {
-    const html = await this.getPageContent(this.url);
-
-    if (html) {
-      return this.extractProductInfo(html);
-    }
-    return [];
   }
 }
+
+export default WebScraper;

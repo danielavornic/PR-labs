@@ -1,9 +1,14 @@
-import { ProcessedData, processProducts } from "./processors/data-processor";
-import { WebScraper } from "./scraper/web-scraper";
+import { ProcessedData, processProducts } from "@/processors/data-processor";
+import TCPScraper from "@/scraper/tcp-scraper";
+import WebScraper from "@/scraper/web-scraper";
 
 const main = async () => {
-  const scraper = new WebScraper("https://darwin.md/laptopuri/personale");
-  const products = await scraper.scrape();
+  const url = "https://darwin.md/laptopuri/personale";
+
+  const webScraper = new WebScraper(url);
+  const tcpScraper = new TCPScraper(url);
+
+  const products = await tcpScraper.scrape();
 
   console.log("Scraped Products:", products);
 
