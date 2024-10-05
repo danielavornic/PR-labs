@@ -1,6 +1,6 @@
 import { Product } from "../models/product";
 
-export function validateProduct(product: Product): boolean {
+export const validateProduct = (product: Product): boolean => {
   // White space trimming
   product.name = product.name.trim();
   product.link = product.link.trim();
@@ -31,4 +31,4 @@ export function validateProduct(product: Product): boolean {
   }
 
   return true;
-}
+};

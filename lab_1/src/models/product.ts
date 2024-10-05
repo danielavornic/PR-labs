@@ -3,8 +3,7 @@ export class Product {
     public name: string,
     public price: number,
     public link: string,
-    public color: string,
-    public timestamp: Date = new Date()
+    public color: string
   ) {}
 
   toJSON() {
@@ -13,7 +12,6 @@ export class Product {
       price: this.price,
       link: this.link,
       color: this.color,
-      timestamp: this.timestamp.toISOString(),
     };
   }
 }
