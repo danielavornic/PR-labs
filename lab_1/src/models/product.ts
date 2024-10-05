@@ -2,7 +2,6 @@ class Product {
   constructor(
     public name: string,
     public price: number,
-    public link: string,
     public color: string
   ) {}
 
@@ -10,7 +9,6 @@ class Product {
     return {
       name: this.name,
       price: this.price,
-      link: this.link,
       color: this.color,
     };
   }

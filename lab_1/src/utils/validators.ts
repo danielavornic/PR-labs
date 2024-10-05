@@ -3,7 +3,6 @@ import Product from "@/models/product";
 export const validateProduct = (product: Product): boolean => {
   // White space trimming
   product.name = product.name.trim();
-  product.link = product.link.trim();
   product.color = product.color.trim();
 
   // Price validation
@@ -22,11 +21,9 @@ export const validateProduct = (product: Product): boolean => {
     return false;
   }
 
-  // Link validation
-  try {
-    new URL(product.link);
-  } catch {
-    console.error(`Invalid URL for product: ${product.name}`);
+  // Color validation
+  if (product.color.length === 0) {
+    console.error(`Empty color for product: ${product.name}`);
     return false;
   }
 

@@ -12,7 +12,7 @@ export const convertPrice = (product: Product): Product => {
   const newPrice = product.price * MDL_TO_EUR_RATE;
   const formattedPrice = parseFloat(newPrice.toFixed(2));
 
-  return new Product(product.name, formattedPrice, product.link, product.color);
+  return new Product(product.name, formattedPrice, product.color);
 };
 
 export const filterByPriceRange = (

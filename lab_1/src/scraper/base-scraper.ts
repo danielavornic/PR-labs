@@ -1,6 +1,12 @@
-import * as cheerio from "cheerio";
 import Product from "@/models/product";
+import * as cheerio from "cheerio";
 import { validateProduct } from "../utils/validators";
+
+interface ProductInfo {
+  name: string;
+  price: number;
+  link: string;
+}
 
 abstract class BaseScraper {
   protected url: string;
@@ -11,16 +17,16 @@ abstract class BaseScraper {
 
   protected abstract getPageContent(url: string): Promise<string | null>;
 
-  protected extractProductInfo(html: string): Product[] {
+  protected extractProductInfo(html: string): ProductInfo[] {
     const $ = cheerio.load(html);
-    const products: Product[] = [];
+    const products: ProductInfo[] = [];
 
     $(".card-product").each((_, element) => {
       const $element = $(element);
       const titleElement = $element.find(".title a");
 
       const name = titleElement.text().trim() || "N/A";
-      const link = titleElement.attr("href") || "N/A";
+      const link = titleElement.attr("href") || "";
       const priceText = $element
         .find(".price-new b")
         .text()
@@ -28,10 +34,7 @@ abstract class BaseScraper {
         .replace(" ", "");
       const price = priceText ? parseInt(priceText) : 0;
 
-      const product = new Product(name, price, link, "N/A");
-      if (validateProduct(product)) {
-        products.push(product);
-      }
+      products.push({ name, price, link });
     });
 
     return products;
@@ -40,23 +43,32 @@ abstract class BaseScraper {
   public async scrape(): Promise<Product[]> {
     const html = await this.getPageContent(this.url);
     if (html) {
-      const products = this.extractProductInfo(html);
-      await this.fetchAdditionalDetails(products);
-      return products;
+      const productInfos = this.extractProductInfo(html);
+      const products = await this.fetchProductDetails(productInfos);
+      return products.filter(validateProduct);
     }
     return [];
   }
 
-  protected async fetchAdditionalDetails(products: Product[]): Promise<void> {
-    for (const product of products) {
-      const productPage = await this.getPageContent(product.link);
+  protected async fetchProductDetails(
+    productInfos: ProductInfo[]
+  ): Promise<Product[]> {
+    const products: Product[] = [];
+
+    for (const info of productInfos) {
+      const productPage = await this.getPageContent(info.link);
       if (productPage) {
         const $product = cheerio.load(productPage);
-        product.color = $product(".color a").first().attr("title") || "N/A";
+        const color = $product(".color a").first().attr("title") || "N/A";
+        products.push(new Product(info.name, info.price, color));
       } else {
-        console.error(`Failed to retrieve product page: ${product.link}`);
+        console.error(`Failed to retrieve product page: ${info.link}`);
+        // Create product with default color if page fetch fails
+        products.push(new Product(info.name, info.price, "N/A"));
       }
     }
+
+    return products;
   }
 }
 
