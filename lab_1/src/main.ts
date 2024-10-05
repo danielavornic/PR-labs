@@ -10,6 +10,9 @@ const main = async () => {
   const minPriceEUR = 400;
   const maxPriceEUR = 1000;
 
+  // const credentials = "201:503";
+  // const encodedCredentials = btoa(credentials);
+
   const webScraper = new WebScraper(url);
   const tcpScraper = new TCPScraper(url);
   const jsonSerializer = new JSONSerializer();
