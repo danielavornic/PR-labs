@@ -21,16 +21,18 @@ abstract class BaseScraper {
     const $ = cheerio.load(html);
     const products: ProductInfo[] = [];
 
-    $(".card-product").each((_, element) => {
+    $(".product-card").each((_, element) => {
       const $element = $(element);
-      const titleElement = $element.find(".title a");
+      const titleElement = $element.find(".title-product");
+      const linkElement = $element.find(".stretched-link");
 
       const name = titleElement.text().trim() || "N/A";
-      const link = titleElement.attr("href") || "";
+      const link = linkElement.attr("href") || "";
       const priceText = $element
-        .find(".price-new b")
+        .find(".price-new")
         .text()
         .trim()
+        .replace(" lei", "")
         .replace(" ", "");
       const price = priceText ? parseInt(priceText) : 0;
 
@@ -59,7 +61,9 @@ abstract class BaseScraper {
       const productPage = await this.getPageContent(info.link);
       if (productPage) {
         const $product = cheerio.load(productPage);
-        const color = $product(".color a").first().attr("title") || "N/A";
+        const color =
+          $product(".colors-product").first().attr("data-bs-original-title") ||
+          "N/A";
         products.push(new Product(info.name, info.price, color));
       } else {
         console.error(`Failed to retrieve product page: ${info.link}`);

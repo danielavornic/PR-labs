@@ -6,12 +6,9 @@ import CustomSerializer from "@/serializers/tagged-binary-serializer";
 import XMLSerializer from "@/serializers/xml-serializer";
 
 const main = async () => {
-  const url = "https://darwin.md/laptopuri/personale";
+  const url = "https://darwin.md/laptopuri";
   const minPriceEUR = 400;
-  const maxPriceEUR = 1000;
-
-  // const credentials = "201:503";
-  // const encodedCredentials = btoa(credentials);
+  const maxPriceEUR = 10000;
 
   const webScraper = new WebScraper(url);
   const tcpScraper = new TCPScraper(url);
