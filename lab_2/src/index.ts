@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import productRoutes from "./routes/products";
 import uploadRoutes from "./routes/upload";
+import { ChatServer } from "./websocket/chat";
 
 const app: Express = express();
 
@@ -13,5 +14,8 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+const wsPort = process.env.WS_PORT || 3001;
+new ChatServer(Number(wsPort));
 
 export default app;
