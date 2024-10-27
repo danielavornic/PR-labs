@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: lab2_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pr_lab2
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    command: ["postgres", "-c", "ssl=off"]
+
+  app:
+    build: .
+    container_name: lab2_app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: pr_lab2
+      PORT: 3000
+      WS_PORT: 3001
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    networks:
+      - app_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: lab2_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: daniela.vornic@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "5050:80"
+    networks:
+      - app_network
+    depends_on:
+      - postgres
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -11,6 +11,6 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node"
   },
-  "include": ["src/**/*", "src/index.ts", "drizzle.config.ts", "tsconfig.json"],
+  "include": ["src/**/*", "src/index.ts", "tsconfig.json"],
   "exclude": ["node_modules"]
 }
