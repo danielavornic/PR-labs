@@ -1,0 +1,32 @@
+[
+  {
+    "author": "Andi",
+    "message": "First message from Andi",
+    "timestamp": "2024-10-30T21:29:26.045Z"
+  },
+  {
+    "author": "Andi",
+    "message": "Second message from Andi",
+    "timestamp": "2024-10-30T21:29:31.799Z"
+  },
+  {
+    "author": "Andi",
+    "message": "Third message from Andi",
+    "timestamp": "2024-10-30T21:29:33.070Z"
+  },
+  {
+    "author": "Dana",
+    "message": "First message from Dana",
+    "timestamp": "2024-10-30T21:29:37.333Z"
+  },
+  {
+    "author": "Dana",
+    "message": "Second message from Dana",
+    "timestamp": "2024-10-30T21:29:41.120Z"
+  },
+  {
+    "author": "Dana",
+    "message": "Third message from Dana",
+    "timestamp": "2024-10-30T21:29:42.350Z"
+  }
+]
