@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: lab3_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-pr_lab2}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    command: ["postgres", "-c", "ssl=off"]
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: lab3_rabbitmq
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-user}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-password}
+    networks:
+      - app_network
+
+  lab2:
+    build:
+      context: ./packages/lab2
+    container_name: lab3_app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${POSTGRES_PORT:-5432}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      DB_NAME: ${POSTGRES_DB:-pr_lab2}
+      PORT: ${SERVER_PORT:-3000}
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    networks:
+      - app_network
+    depends_on:
+      - postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: lab3_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-daniela.vornic@gmail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-password}
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - app_network
+    depends_on:
+      - postgres
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
