@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Laptop Apple MacBook Air 13 2020 Space Gray",
+    "price": 797.2,
+    "color": "Gray"
+  },
+  {
+    "name": "Laptop Apple MacBook Air 13 2020 Gold",
+    "price": 797.2,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Lenovo IdeaPad Gaming 3 15ACH6-8URK Shadow Black",
+    "price": 724.68,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Apple MacBook Air 13.6 2022 Midnight",
+    "price": 1035.48,
+    "color": "Starlight"
+  },
+  {
+    "name": "Laptop Apple MacBook Air 13.6 2022 Silver",
+    "price": 1035.48,
+    "color": "Starlight"
+  },
+  {
+    "name": "Laptop Apple MacBook Air 13.6 2022 Space Gray",
+    "price": 1035.48,
+    "color": "Starlight"
+  },
+  {
+    "name": "Laptop Apple MacBook Air 13.6 2022 Starlight",
+    "price": 1035.48,
+    "color": "Starlight"
+  },
+  {
+    "name": "Laptop Lenovo IdeaPad Slim 3 16IAH8-07RK Arctic Gray",
+    "price": 564.1,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Asus TUF Gaming A15 FA506NF Graphite Black",
+    "price": 828.28,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Lenovo IdeaPad Slim 5 16IRL8-2LRK Cloud Gray",
+    "price": 880.08,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Lenovo IdeaPad Slim 3 16IAH8 Arctic Gray",
+    "price": 512.3,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Apple MacBook Air 13.6 2024 Midnight",
+    "price": 1190.88,
+    "color": "Midnight"
+  }
+]

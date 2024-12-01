@@ -12,4 +12,9 @@ export const config = {
   lab2: {
     apiUrl: process.env.LAB2_API_URL || "http://localhost:3000",
   },
+  ftp: {
+    host: process.env.FTP_HOST || "localhost",
+    user: process.env.FTP_USER || "user",
+    password: process.env.FTP_PASSWORD || "password",
+  },
 };

@@ -58,6 +58,21 @@ services:
     depends_on:
       - postgres
 
+  ftp_server:
+    image: stilliard/pure-ftpd:hardened
+    container_name: ftp_server
+    ports:
+      - "${FTP_CONTROL_PORT:-21}:21"
+      - "${FTP_PASV_PORTS:-30000-30009}:30000-30009"
+    environment:
+      FTP_USER_NAME: ${FTP_USER:-testuser}
+      FTP_USER_PASS: ${FTP_PASSWORD:-testpasswor}
+      FTP_USER_HOME: /home/testuser
+      PURE_FTPD_MAX_CLIENTS: 50
+      PURE_FTPD_MAX_CONNECTIONS: 50
+    volumes:
+      - ./ftp_data:/home/testuser
+
 networks:
   app_network:
     driver: bridge
