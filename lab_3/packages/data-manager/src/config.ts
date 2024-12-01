@@ -9,8 +9,8 @@ export const config = {
     url: `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
     queue: process.env.QUEUE_NAME || "scraped_products",
   },
-  lab2: {
-    apiUrl: process.env.LAB2_API_URL || "http://localhost:3000",
+  apiServer: {
+    url: process.env.API_SERVER_URL || "http://localhost:3000",
   },
   ftp: {
     host: process.env.FTP_HOST || "localhost",

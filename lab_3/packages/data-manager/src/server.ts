@@ -62,7 +62,7 @@ class IntermediaryServer {
 
             this.lastProcessedData.push(data);
 
-            await axios.post(`${config.lab2.apiUrl}/api/products`, {
+            await axios.post(`${config.apiServer.url}/api/products`, {
               name: data.name,
               price: data.price,
               color: data.color,
@@ -138,7 +138,7 @@ class IntermediaryServer {
         await fs.unlink(tempFile);
 
         if (fileContent) {
-          await this.sendFileToLab2(fileContent);
+          await this.sendFileToApiServer(fileContent);
         }
       } catch (error) {
         console.error("Error in FTP check:", error);
@@ -149,7 +149,7 @@ class IntermediaryServer {
     }, 30000);
   }
 
-  private async sendFileToLab2(fileContent: Buffer) {
+  private async sendFileToApiServer(fileContent: Buffer) {
     try {
       const formData = new FormData();
       formData.append("file", fileContent, {
@@ -157,7 +157,7 @@ class IntermediaryServer {
         contentType: "application/json",
       });
 
-      await axios.post(`${config.lab2.apiUrl}/api/upload/file`, formData, {
+      await axios.post(`${config.apiServer.url}/api/upload/file`, formData, {
         headers: formData.getHeaders(),
       });
       console.log("File sent to Lab 2 server");
