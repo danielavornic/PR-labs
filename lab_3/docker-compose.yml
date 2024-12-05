@@ -162,6 +162,18 @@ services:
       timeout: 5s
       retries: 3
 
+  email-service:
+    build:
+      context: ./packages/email-service
+    container_name: email_service
+    environment:
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+    networks:
+      - app_network
+
 networks:
   app_network:
     driver: bridge
