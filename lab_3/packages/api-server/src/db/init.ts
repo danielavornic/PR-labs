@@ -16,6 +16,21 @@ const pool = new Pool({
 
 const db = drizzle(pool);
 
+async function checkIfMigrationsNeeded() {
+  try {
+    const result = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM pg_tables
+        WHERE schemaname = 'public'
+        AND tablename = 'migrations'
+      );
+    `);
+    return !result.rows[0].exists;
+  } catch (error) {
+    return true; // assume migrations are needed
+  }
+}
+
 async function waitForDb() {
   while (true) {
     try {
@@ -32,13 +47,25 @@ async function waitForDb() {
 async function init() {
   try {
     await waitForDb();
-    console.log("Running migrations...");
-    await migrate(db, { migrationsFolder: "drizzle" });
-    console.log("Migrations completed");
-    await pool.end();
+
+    // run migrations if we're server 1
+    if (process.env.SERVER_ID === "1") {
+      const needsMigrations = await checkIfMigrationsNeeded();
+      if (needsMigrations) {
+        console.log("Running migrations...");
+        await migrate(db, { migrationsFolder: "drizzle" });
+        console.log("Migrations completed");
+      } else {
+        console.log("Migrations already applied");
+      }
+    } else {
+      console.log(`Server ${process.env.SERVER_ID} skipping migrations`);
+    }
   } catch (err) {
     console.error("Migration failed:", err);
     process.exit(1);
+  } finally {
+    await pool.end();
   }
 }
 

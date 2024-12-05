@@ -1,42 +1,47 @@
 [
   {
     "name": "Laptop Apple MacBook Air 13 2020 Space Gray",
-    "price": 797.2,
+    "price": 828.28,
     "color": "Gray"
   },
   {
     "name": "Laptop Apple MacBook Air 13 2020 Gold",
-    "price": 797.2,
+    "price": 983.68,
     "color": "N/A"
   },
   {
     "name": "Laptop Lenovo IdeaPad Gaming 3 15ACH6-8URK Shadow Black",
-    "price": 724.68,
+    "price": 776.48,
     "color": "N/A"
   },
   {
     "name": "Laptop Apple MacBook Air 13.6 2022 Midnight",
-    "price": 1035.48,
+    "price": 1061.38,
     "color": "Starlight"
   },
   {
     "name": "Laptop Apple MacBook Air 13.6 2022 Silver",
-    "price": 1035.48,
+    "price": 1061.38,
     "color": "Starlight"
   },
   {
     "name": "Laptop Apple MacBook Air 13.6 2022 Space Gray",
-    "price": 1035.48,
+    "price": 1139.08,
     "color": "Starlight"
   },
   {
     "name": "Laptop Apple MacBook Air 13.6 2022 Starlight",
-    "price": 1035.48,
+    "price": 1139.08,
     "color": "Starlight"
   },
   {
     "name": "Laptop Lenovo IdeaPad Slim 3 16IAH8-07RK Arctic Gray",
-    "price": 564.1,
+    "price": 512.3,
+    "color": "N/A"
+  },
+  {
+    "name": "Laptop Lenovo IdeaPad Gaming 3 15ACH6KJRE Shadow Black",
+    "price": 1087.28,
     "color": "N/A"
   },
   {
@@ -56,7 +61,7 @@
   },
   {
     "name": "Laptop Apple MacBook Air 13.6 2024 Midnight",
-    "price": 1190.88,
+    "price": 1294.48,
     "color": "Midnight"
   }
 ]

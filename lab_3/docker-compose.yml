@@ -14,6 +14,11 @@ services:
     networks:
       - app_network
     command: ["postgres", "-c", "ssl=off"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4
@@ -39,24 +44,100 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-password}
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  api-server:
+  data_manager:
+    build:
+      context: ./packages/data-manager
+    container_name: data_manager
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: ${RABBITMQ_USER:-user}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-password}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      FTP_HOST: ftp_server
+      FTP_USER: ${FTP_USER:-testuser}
+      FTP_PASSWORD: ${FTP_PASSWORD:-testpassword}
+      FTP_CONTROL_PORT: ${FTP_CONTROL_PORT:-21}
+    ports:
+      - "8080:8080" # For leader updates
+    networks:
+      - app_network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      ftp_server:
+        condition: service_started
+    restart: on-failure
+
+  api-server-1:
     build:
       context: ./packages/api-server
-    container_name: api_server
+    container_name: api_server_1
     environment:
       DB_HOST: postgres
       DB_PORT: ${POSTGRES_PORT:-5432}
       DB_USER: ${POSTGRES_USER:-postgres}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
       DB_NAME: ${POSTGRES_DB:-pr_lab2}
-      PORT: ${SERVER_PORT:-3000}
+      PORT: ${API_SERVER_1_PORT:-8000}
+      UDP_PORT: ${UDP_PORT_1:-3000}
+      SERVER_ID: "1"
     ports:
-      - "${SERVER_PORT:-3000}:3000"
+      - "8000:8000"
+      - "3000:3000/udp"
     networks:
       - app_network
     depends_on:
-      - postgres
+      - data_manager
+
+  api-server-2:
+    build:
+      context: ./packages/api-server
+    container_name: api_server_2
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${POSTGRES_PORT:-5432}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      DB_NAME: ${POSTGRES_DB:-pr_lab2}
+      PORT: ${API_SERVER_2_PORT:-8001}
+      UDP_PORT: ${UDP_PORT_2:-3001}
+      SERVER_ID: "2"
+    ports:
+      - "8001:8001"
+      - "3001:3001/udp"
+    networks:
+      - app_network
+    depends_on:
+      - data_manager
+      - api-server-1 # leader updates
+
+  api-server-3:
+    build:
+      context: ./packages/api-server
+    container_name: api_server_3
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${POSTGRES_PORT:-5432}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      DB_NAME: ${POSTGRES_DB:-pr_lab2}
+      PORT: ${API_SERVER_3_PORT:-8002}
+      UDP_PORT: ${UDP_PORT_3:-3002}
+      SERVER_ID: "3"
+    ports:
+      - "8002:8002"
+      - "3002:3002/udp"
+    networks:
+      - app_network
+    depends_on:
+      - data_manager
+      - api-server-1
 
   ftp_server:
     image: stilliard/pure-ftpd:hardened
@@ -66,12 +147,20 @@ services:
       - "${FTP_PASV_PORTS:-30000-30009}:30000-30009"
     environment:
       FTP_USER_NAME: ${FTP_USER:-testuser}
-      FTP_USER_PASS: ${FTP_PASSWORD:-testpasswor}
+      FTP_USER_PASS: ${FTP_PASSWORD:-testpassword}
       FTP_USER_HOME: /home/testuser
       PURE_FTPD_MAX_CLIENTS: 50
       PURE_FTPD_MAX_CONNECTIONS: 50
+      retries: 5
+    networks:
+      - app_network
     volumes:
       - ./ftp_data:/home/testuser
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "21"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   app_network:
