@@ -1,12 +1,5 @@
 import dgram from "dgram";
-
-export interface ElectionMessage {
-  type: "REQUEST_VOTE" | "VOTE_RESPONSE" | "APPEND_ENTRIES";
-  term: number;
-  serverId: string;
-  votedFor?: string;
-  timestamp: number;
-}
+import { ElectionMessage } from "./types";
 
 export class LeaderElection {
   private socket: dgram.Socket;
@@ -65,13 +58,14 @@ export class LeaderElection {
       `Server ${this.serverId} starting election for term ${this.currentTerm}`
     );
 
-    // Request votes from all
+    // request votes from all
     this.peers.forEach((peer) => {
       this.send(
         {
           type: "REQUEST_VOTE",
           term: this.currentTerm,
           serverId: this.serverId,
+          lastTerm: this.currentTerm,
           timestamp: Date.now(),
         },
         peer.port,
@@ -83,7 +77,7 @@ export class LeaderElection {
   }
 
   private handleMessage(message: ElectionMessage, senderPort: number) {
-    // If a message with higher term, update our term
+    // update our term if we see a higher term
     if (message.term > this.currentTerm) {
       this.currentTerm = message.term;
       this.isLeader = false;
@@ -106,12 +100,18 @@ export class LeaderElection {
     }
   }
 
+  private isAtLeastAsUpToDate(candidateLastTerm: number = 0): boolean {
+    return candidateLastTerm >= this.currentTerm;
+  }
+
   private handleVoteRequest(message: ElectionMessage, senderPort: number) {
     // grant vote if our term is not higher
     // and we haven't voted for someone else
+    // and candidate is at least as up-to-date as us
     if (
       message.term >= this.currentTerm &&
-      (this.votedFor === null || this.votedFor === message.serverId)
+      (this.votedFor === null || this.votedFor === message.serverId) &&
+      this.isAtLeastAsUpToDate(message.lastTerm)
     ) {
       this.currentTerm = message.term;
       this.votedFor = message.serverId;
@@ -123,6 +123,7 @@ export class LeaderElection {
           term: this.currentTerm,
           serverId: this.serverId,
           votedFor: message.serverId,
+          lastTerm: this.currentTerm,
           timestamp: Date.now(),
         },
         senderPort,
@@ -167,7 +168,6 @@ export class LeaderElection {
       `Server ${this.serverId} becomes leader for term ${this.currentTerm}`
     );
 
-    // Start sending heartbeats
     this.heartbeatInterval = setInterval(() => {
       this.peers.forEach((peer) => {
         this.send(

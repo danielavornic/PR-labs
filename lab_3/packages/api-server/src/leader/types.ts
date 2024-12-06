@@ -4,4 +4,5 @@ export interface ElectionMessage {
   serverId: string;
   votedFor?: string;
   timestamp: number;
+  lastTerm?: number;
 }
